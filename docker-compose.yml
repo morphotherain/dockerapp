@@ -1,0 +1,33 @@
+version: '3'
+services:
+  web:
+    build:
+      context: ./Webapp
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8080"
+    depends_on:
+      - db
+    networks:
+      my_network:
+        ipv4_address: 172.18.0.20
+  db:
+    image: mysql:8.0.30
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234567
+      MYSQL_DATABASE: javaweb_books_management_system
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./my.cnf:/etc/my.cnf 
+    networks:
+      my_network:
+        ipv4_address: 172.18.0.10
+
+networks:
+  my_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/24
